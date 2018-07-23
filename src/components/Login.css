@@ -1,0 +1,37 @@
+@media all and (min-width: 480px) {
+    .login {
+      padding: 60px 0;
+    }
+  
+    .login form {
+      margin: 0 auto;
+      max-width: 320px;
+    }
+  }
+
+  .navbar-default .navbar-nav > li > a{
+    color: black;
+  }
+  .navbar-default .navbar-brand{
+    color: black;
+  }
+
+  .navbar-default .navbar-brand:focus, .navbar-default .navbar-brand:hover{
+    color: #0000FF;
+  }
+  .navbar-default .navbar-nav > li > a:focus, .navbar-default .navbar-nav > li > a:hover{
+    color: #0000FF;
+  }
+  /*
+  .btn-default {
+    background-image: linear-gradient(to bottom,#910DFF 0,#910DFF 100%);
+    color: #fff;
+    border: none;
+  }
+
+  .btn-default:focus,.btn-default:hover  {
+    background-image: linear-gradient(to bottom,#910DFF 0,#910DFF 100%);
+    color: #fff;
+    border: none;
+  }
+  */
