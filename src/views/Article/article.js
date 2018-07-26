@@ -41,17 +41,27 @@ class Article extends Component {
                 prixUnitaire: 0,
             },
             articlesList: [],
+            size:7,
+            currentPage:1,
+            totalPages: 0,
             isLoading: false,
             
         }
     }
 
+
     componentDidMount(){
         this.setState({ isLoading: true });
-
-        axios.get(`${BASE_URL}${COMPONENT_ARTICLE}`)
+        const {size, currentPage} = this.state;
+        axios.get(`${BASE_URL}${COMPONENT_ARTICLE}?size=${size}&page=${currentPage-1}`)
         .then(response => {
-            this.setState(prevState => ({ articlesList: [...response.data], isLoading: false}))
+            this.setState(prevState => (
+                { 
+                    articlesList: [...response.data.content],
+                    totalPages: response.data.totalPages, 
+                    isLoading: false,
+                }
+            ))
             
         })
         .catch(err => console.log(err));
@@ -87,6 +97,27 @@ class Article extends Component {
         if(prix < 500 ) return "success";
         else if(prix < 2000 ) return "warning";
         else return "danger";
+    }
+    getPagination = () => {
+        const {currentPage, totalPages} = this.state;
+        const pageNumbers = [];
+        for(let i = 0 ; i < totalPages ; i++){
+            pageNumbers.push(i);
+        }
+        return (
+            pageNumbers.map((n, index) => {
+                return (
+                    n === currentPage-1 ? 
+                    <PaginationItem key={index} active>
+                        <PaginationLink onClick={this.handlePagination} tag="button" value={n}>{n+1}</PaginationLink>
+                    </PaginationItem>
+                    : 
+                    <PaginationItem key={index}>
+                        <PaginationLink onClick={this.handlePagination} tag="button" value={n}>{n+1}</PaginationLink>
+                    </PaginationItem>
+                );
+            })
+        );
     }
 
     getContent(){
@@ -156,12 +187,7 @@ class Article extends Component {
                                     <nav>
                                     <Pagination>
                                         <PaginationItem><PaginationLink previous tag="button">Prev</PaginationLink></PaginationItem>
-                                        <PaginationItem active>
-                                        <PaginationLink tag="button">1</PaginationLink>
-                                        </PaginationItem>
-                                        <PaginationItem><PaginationLink tag="button">2</PaginationLink></PaginationItem>
-                                        <PaginationItem><PaginationLink tag="button">3</PaginationLink></PaginationItem>
-                                        <PaginationItem><PaginationLink tag="button">4</PaginationLink></PaginationItem>
+                                        {this.getPagination()}
                                         <PaginationItem><PaginationLink next tag="button">Next</PaginationLink></PaginationItem>
                                     </Pagination>
                                     </nav>

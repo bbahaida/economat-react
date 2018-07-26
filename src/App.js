@@ -16,15 +16,23 @@ import './scss/style.css'
 // Containers
 import { DefaultLayout } from './containers';
 
+// Pages
+import Login from './views/Login/login';
+
 // import { renderRoutes } from 'react-router-config';
 
 class App extends Component {
+  state = {
+    authenticated: true,
+  }
   render() {
     return (
       <HashRouter>
         <Switch>
-          
-          <Route path="/" name="Home" component={DefaultLayout} />
+          {this.state.authenticated ? 
+            (<Route path="/" name="Accueil" component={DefaultLayout} />)
+             : 
+            (<Route path="/" name="Login Page"  render={(routeProps) => <Login authenticated={() => this.handleLogin}/>} />)}
         </Switch>
       </HashRouter>
     );

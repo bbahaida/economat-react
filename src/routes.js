@@ -27,8 +27,16 @@ const Commande = Loadable({
   loader: () => import('./views/Commande/commande'),
   loading: Loading,
 });
+const Dashboard = Loadable({
+  loader: () => import('./views/Dashboard/dashboard'),
+  loading: Loading,
+});
 const Invoice = Loadable({
   loader: () => import('./views/Invoice/invoice'),
+  loading: Loading,
+});
+const Login = Loadable({
+  loader: () => import('./views/Login/login'),
   loading: Loading,
 });
 
@@ -40,8 +48,10 @@ const routes = [
   { path: '/', exact: true, name: 'Home', component: DefaultLayout },
  
   { path: '/agents', exact: true, name: 'Agents', component: Agent },
-  { path: '/commandes', exact: true, name: 'Commandes', component: Commande },
+  
   { path: '/articles', exact: true, name: 'Articles', component: Article },
+  { path: '/commandes', exact: true, name: 'Commandes', component: Commande },
+  { path: '/dashboard', exact: true, name: 'Home', component: Dashboard },
   { path: '/invoice', exact: true, name: 'Invoice', component: Invoice },
 ];
 

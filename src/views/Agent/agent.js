@@ -113,6 +113,10 @@ class Agent extends Component {
             isLoading: false
         }));
     }
+    handleNext = () => {
+        const next = this.state.currentPage + 1;
+        this.setState(prev => ({currentPage: next}));
+    }
 
     getBadgeClass(id){
         if(id === 1 ) return "warning";
@@ -221,7 +225,7 @@ class Agent extends Component {
                                     <PaginationItem><PaginationLink previous tag="button">Prev</PaginationLink></PaginationItem>
                                     {this.getPagination()}
                                     
-                                    <PaginationItem><PaginationLink next tag="button">Next</PaginationLink></PaginationItem>
+                                    <PaginationItem><PaginationLink next tag="button" onClick={this.handleNext}>Next</PaginationLink></PaginationItem>
                                 </Pagination>
                                 </nav>
                             </CardBody>
