@@ -45,14 +45,14 @@ const Login = Loadable({
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
-  { path: '/', exact: true, name: 'Home', component: DefaultLayout },
+  { path: '/', exact: true, name: 'Accueil', component: DefaultLayout },
  
   { path: '/agents', exact: true, name: 'Agents', component: Agent },
   
   { path: '/articles', exact: true, name: 'Articles', component: Article },
   { path: '/commandes', exact: true, name: 'Commandes', component: Commande },
-  { path: '/dashboard', exact: true, name: 'Home', component: Dashboard },
-  { path: '/invoice', exact: true, name: 'Invoice', component: Invoice },
+  { path: '/dashboard', exact: true, name: 'Tableau de bord', component: Dashboard },
+  { path: '/facture', exact: true, name: 'Facture', component: Invoice },
 ];
 
 export default routes;

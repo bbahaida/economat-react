@@ -45,7 +45,7 @@ class Agent extends Component {
             },
             agentsList: [],
             categories: [],
-            size:2,
+            size:8,
             currentPage:1,
             totalPages: 0,
             isLoading: false,
@@ -96,10 +96,16 @@ class Agent extends Component {
         .catch(err=>console.log(err));
 
         
-
-        axios.get(`${BASE_URL}${COMPONENT_AGENT}`)
+        const {size, currentPage} = this.state;
+        axios.get(`${BASE_URL}${COMPONENT_AGENT}?size=${size}&page=${currentPage-1}`)
         .then(response => {
-            this.setState(prevState => ({ agentsList: [...response.data], isLoading: false}))
+            this.setState(prevState => (
+                { 
+                    agentsList: [...response.data.content], 
+                    isLoading: false, 
+                    totalPages: response.data.totalPages,
+                }
+            ));
             //console.log(response.data);
         })
         .catch(err => console.log(err));
@@ -152,46 +158,9 @@ class Agent extends Component {
                 Loading()
             );
         }else{
-            const {categories, agentsList} = this.state
+            const {agentsList} = this.state
         return (
-            <div className="animated fadeIn">
-                <Row>
-                    <Col xs="12" sm="6">
-                        <Card>
-                            <CardHeader>
-                                <strong>Ajouter un agent</strong>
-                            </CardHeader>
-                            <CardBody>
-                                <Form>
-                                    <FormGroup>
-                                        <Label htmlFor="nom">Nom complet</Label>
-                                        <Input type="text" id="nom" onChange={this.handleChange} placeholder="Taper le nom complet de l'agent" required />
-                                        
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <Label htmlFor="service">Service</Label>
-                                        <Input type="number" id="service" onChange={this.handleChange} placeholder="Service code" required />
-                                        
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <Label htmlFor="categorieId">Categorie</Label>
-                                        <Input type="select" onChange={this.handleChange} id="categorieId">
-                                            {categories.map((categorie,index) => {
-                                                return <option key={index} value={index}>{categorie.designation}</option>
-                                            })}
-                                        </Input>
-                                        
-                                    </FormGroup>
-                                </Form>
-                            </CardBody>
-                            <CardFooter>
-                                <Button type="submit" size="sm" color="primary" onClick={this.handleSubmit} ><i className="fa fa-dot-circle-o"></i> Submit</Button>
-                                <Button type="reset" size="sm" color="danger"><i className="fa fa-ban"></i> Reset</Button>
-                            </CardFooter>
-                        </Card>
-                    </Col>
-                    <Col xs="12" sm="6">
-                        <Card>
+            <Card>
                             <CardHeader>
                                 <i className="fa fa-align-justify"></i> List des agents
                             </CardHeader>
@@ -230,16 +199,56 @@ class Agent extends Component {
                                 </nav>
                             </CardBody>
                             </Card>
-                    </Col>
-                </Row>
-            </div>
 
         );
         }
     }
     
     render() {
-        return this.getContent();
+        const {categories} = this.state
+        return(
+            <div className="animated fadeIn">
+                <Row>
+                    <Col xs="12" sm="6">
+                        <Card>
+                            <CardHeader>
+                                <strong>Ajouter un agent</strong>
+                            </CardHeader>
+                            <CardBody>
+                                <Form>
+                                    <FormGroup>
+                                        <Label htmlFor="nom">Nom complet</Label>
+                                        <Input type="text" id="nom" onChange={this.handleChange} placeholder="Taper le nom complet de l'agent" required />
+                                        
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Label htmlFor="service">Service</Label>
+                                        <Input type="number" id="service" onChange={this.handleChange} placeholder="Service code" required />
+                                        
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Label htmlFor="categorieId">Categorie</Label>
+                                        <Input type="select" onChange={this.handleChange} id="categorieId">
+                                            {categories.map((categorie,index) => {
+                                                return <option key={index} value={index}>{categorie.designation}</option>
+                                            })}
+                                        </Input>
+                                        
+                                    </FormGroup>
+                                </Form>
+                            </CardBody>
+                            <CardFooter>
+                                <Button type="submit" size="sm" color="primary" onClick={this.handleSubmit} ><i className="fa fa-dot-circle-o"></i> Submit</Button>
+                                <Button type="reset" size="sm" color="danger"><i className="fa fa-ban"></i> Reset</Button>
+                            </CardFooter>
+                        </Card>
+                    </Col>
+                    <Col xs="12" sm="6">
+                        {this.getContent()}
+                    </Col>
+                </Row>
+            </div>
+        ); 
     }
     componentDidMount(){
         this.setState({ isLoading: true });

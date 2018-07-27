@@ -37,6 +37,7 @@ class Article extends Component {
         super(props);
         this.state = {
             article:{
+                code: 0,
                 designation: '',
                 prixUnitaire: 0,
             },
@@ -45,7 +46,6 @@ class Article extends Component {
             currentPage:1,
             totalPages: 0,
             isLoading: false,
-            
         }
     }
 
@@ -80,18 +80,67 @@ class Article extends Component {
             article, 
         }); 
     }
+    handleDelete = (code) =>{
+        console.log('delete '+code);
+    }
+    handleEdit = (code) =>{
+        /*
+        const counters = [...this.state.counters];
+    const index = counters.indexOf(counter);
+    counters[index] = {...counter};
+    counters[index].value++;
+    this.setState({counters});
+        */
+        /* const articlesList = [...this.state.articlesList];
+        const index = articlesList. */
+
+        const {articlesList} = this.state;
+
+        const article = articlesList.find(item => item.code === code);
+        this.setState({article});
+    }
 
 
-    onSubmit = e => {
+    handleSubmit = e => {
         
         e.preventDefault();
+        const {article} = this.state;
+        this.setState({ isLoading: true });
+        if(article.designation !== ''){
+            
+            if(article.code>0){
+                console.log(`${BASE_URL}${COMPONENT_ARTICLE}/${article.code}`);
+                axios.put(`${BASE_URL}${COMPONENT_ARTICLE}/${article.code}`,article)
+                .then(response => {
+                    console.log(response.data);
+                })
+                .catch(err=>console.log(err));
+            }else{
+                console.log(`${BASE_URL}${COMPONENT_ARTICLE}`);
+                axios.post(`${BASE_URL}${COMPONENT_ARTICLE}`,article)
+                .then(response => {
+                    console.log(response.data);
+                })
+                .catch(err=>console.log(err));
+            }
+            
+
+            const {size, currentPage} = this.state;
+            axios.get(`${BASE_URL}${COMPONENT_ARTICLE}?size=${size}&page=${currentPage-1}`)
+            .then(response => {
+                this.setState(prevState => (
+                    { 
+                        articlesList: [...response.data.content],
+                        totalPages: response.data.totalPages, 
+                        isLoading: false,
+                    }
+                ))
+            //console.log(response.data);
+            })
+            .catch(err => console.log(err));
+        }
         
-        //const data = new FormData(e.target);
-        //console.log(data);
-        console.log(this.state.article);
-        /*axios.post(`${BASE_URL}${COMPONENT_AGENT}`,this.state)
-        .catch(err=>console.log(err));*/
-    }
+   }
 
     getBadgeClass(prix){
         if(prix < 500 ) return "success";
@@ -128,36 +177,7 @@ class Article extends Component {
         }else{
             const {articlesList} = this.state
             return (
-                <div className="animated fadeIn">
-                    <Row>
-                        <Col xs="12" sm="6">
-                            <Card>
-                                <CardHeader>
-                                    <strong>Ajouter un article</strong>
-                                </CardHeader>
-                                <CardBody>
-                                    <Form ref="articleForm" >
-                                        <FormGroup>
-                                            <Label htmlFor="designation">Designation</Label>
-                                            <Input type="text" id="designation" onChange={this.handleChange} placeholder="La designation de l'article" required />
-                                            
-                                        </FormGroup>
-                                        <FormGroup>
-                                            <Label htmlFor="prixUnitaire">Prix Unitaire</Label>
-                                            <Input type="number" id="prixUnitaire" onChange={this.handleChange} placeholder="Le prix unitaire de l'article" required />
-                                            
-                                        </FormGroup>
-                                        
-                                    </Form>
-                                </CardBody>
-                                <CardFooter>
-                                    <Button type="submit" size="sm" color="primary" onClick={this.onSubmit} ><i className="fa fa-dot-circle-o"></i> Submit</Button>
-                                    <Button type="reset" size="sm" color="danger"><i className="fa fa-ban"></i> Reset</Button>
-                                </CardFooter>
-                            </Card>
-                        </Col>
-                        <Col xs="12" sm="6">
-                            <Card>
+                <Card>
                                 <CardHeader>
                                     <i className="fa fa-align-justify"></i> List des articles
                                 </CardHeader>
@@ -168,6 +188,8 @@ class Article extends Component {
                                         <th>Code</th>
                                         <th>Designation</th>
                                         <th>Prix Unitaire</th>
+                                        <th>Modifier</th>
+                                        <th>Supprimer</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -178,7 +200,8 @@ class Article extends Component {
                                                     <td>{item.designation}</td>
                                                     
                                                     <td><Badge color={this.getBadgeClass(item.prixUnitaire)}>{item.prixUnitaire}</Badge></td>
-    
+                                                    <td><span style={{paddingLeft:'40%'}} onClick={() => this.handleDelete(item.code)} className="icon-trash icons"></span></td>
+                                                    <td><span style={{paddingLeft:'40%'}} onClick={() => this.handleEdit(item.code)} className="icon-pencil icons"></span></td>
                                                 </tr>
                                             );
                                         })}
@@ -192,17 +215,50 @@ class Article extends Component {
                                     </Pagination>
                                     </nav>
                                 </CardBody>
-                                </Card>
-                        </Col>
-                    </Row>
-                </div>
+                            </Card>
     
             );
         }
     }
     
     render() {
-        return this.getContent();
+        const {article} = this.state
+        return (
+            <div className="animated fadeIn">
+                    <Row>
+                        <Col xs="12" sm="6">
+                            <Card>
+                                <CardHeader>
+                                    <strong>Ajouter un article</strong>
+                                </CardHeader>
+                                <CardBody>
+                                    <Form ref="articleForm" >
+                                        <FormGroup>
+                                            <Label htmlFor="designation">Designation</Label>
+                                            <Input type="text" id="designation" value={article.designation} onChange={this.handleChange} placeholder="La designation de l'article" required />
+                                            
+                                        </FormGroup>
+                                        <FormGroup>
+                                            <Label htmlFor="prixUnitaire">Prix Unitaire</Label>
+                                            <Input type="number" id="prixUnitaire" value={article.prixUnitaire} onChange={this.handleChange} placeholder="Le prix unitaire de l'article" required />
+                                            
+                                        </FormGroup>
+                                        
+                                    </Form>
+                                </CardBody>
+                                <CardFooter>
+                                    <Button type="submit" size="sm" color="primary" onClick={this.handleSubmit} ><i className="fa fa-dot-circle-o"></i> Submit</Button>
+                                    <Button type="reset" size="sm" color="danger"><i className="fa fa-ban"></i> Reset</Button>
+                                </CardFooter>
+                            </Card>
+                        </Col>
+                        <Col xs="12" sm="6">
+                            {this.getContent()}
+                        </Col>
+                    </Row>
+                </div>
+            
+        );
     }
 }
  
